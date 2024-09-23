@@ -1,9 +1,19 @@
-const openModals = () => {
+const openBreakfasts = () => {
+  let mealButtons = document.querySelectorAll('[ng-show="showBreakfast"]');
+
+  mealButtons.forEach(mb => {
+    let popupLink = mb.querySelector('a');
+    console.log('Opening breakfast modal');
+    popupLink?.click();
+  });
+};
+
+const openLunches = () => {
   let mealButtons = document.querySelectorAll('[ng-show="showMeals"]');
 
   mealButtons.forEach(mb => {
     let popupLink = mb.querySelector('a');
-    console.log('Opening meal modal');
+    console.log('Opening lunch modal');
     popupLink?.click();
   });
 };
