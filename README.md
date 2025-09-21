@@ -17,9 +17,11 @@ A browser script that simplifies the school lunch ordering process by providing 
 1. Navigate to your school's lunch ordering website
 2. Open browser developer tools (F12 or right-click anywhere and select "Inspect element")
 3. Go to the Console tab
-4. Copy and paste the entire `makeItEasy.js` script
+4. Copy and paste the entire script from [makeItEasy.js](makeItEasy.js) or click [this link](https://raw.githubusercontent.com/KyleStych/AxisMeals/main/makeItEasy.js) to open the raw script
 5. Press Enter to execute
 6. The "Make It Easy" modal will appear automatically
+
+> **Note**: Replace `USERNAME/REPO` in the raw link with your actual GitHub username and repository name.
 
 ## How to Use
 
