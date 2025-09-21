@@ -15,7 +15,7 @@ A browser script that simplifies the school lunch ordering process by providing 
 
 ### Method 1: Browser Console (Recommended)
 1. Navigate to your school's lunch ordering website
-2. Open browser developer tools (F12)
+2. Open browser developer tools (F12 or right-click anywhere and select "Inspect element")
 3. Go to the Console tab
 4. Copy and paste the entire `makeItEasy.js` script
 5. Press Enter to execute
