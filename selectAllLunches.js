@@ -176,9 +176,13 @@
       '#28a824'
     );
 
+    // Create checkout button (copy of original)
+    const checkoutBtn = createCheckoutButton();
+
     buttonContainer.appendChild(openBreakfastsBtn);
     buttonContainer.appendChild(openLunchesBtn);
     buttonContainer.appendChild(addAllToCartBtn);
+    buttonContainer.appendChild(checkoutBtn);
 
     // Create make buttons bigger link
     const makeButtonsBiggerLink = document.createElement('div');
@@ -191,7 +195,10 @@
     margin: 20px 0 15px 0;
     text-align: center;
   `;
-    makeButtonsBiggerLink.onclick = makeButtonsBigger;
+    makeButtonsBiggerLink.onclick = () => {
+      makeButtonsBigger();
+      // Don't close the modal - let users access multiple functions
+    };
 
     // Create checkbox container
     const checkboxContainer = document.createElement('div');
@@ -220,7 +227,7 @@
     font-size: 14px;
     cursor: pointer;
     user-select: none;
-    margin-top: 5px;
+    margin-top: 9px;
   `;
 
     checkboxContainer.appendChild(checkbox);
@@ -264,16 +271,16 @@
     const button = document.createElement('button');
     button.textContent = text;
     button.style.cssText = `
-    background-color: ${color};
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 500;
-    transition: background-color 0.2s;
-  `;
+      background-color: ${color};
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 500;
+      transition: background-color 0.2s;
+    `;
 
     button.onmouseover = () => {
       button.style.opacity = '0.9';
@@ -285,19 +292,95 @@
 
     button.onclick = () => {
       onClick();
-      // Check if the hide reopen button checkbox is checked before closing
-      const hideCheckbox = document.getElementById('hide-reopen-checkbox');
-      const shouldHideReopen = hideCheckbox && hideCheckbox.checked;
-
-      closeModal();
-
-      // If checkbox is checked, also hide any existing reopen button
-      if (shouldHideReopen) {
-        hideReopenButton();
-      }
+      // Don't close the modal - let users access multiple functions
     };
 
     return button;
+  };
+
+  const createCheckoutButton = () => {
+    // Find the original checkout button
+    const originalCheckoutBtn = document.querySelector(
+      '[ng-click="reviewOrder()"]'
+    );
+
+    if (!originalCheckoutBtn) {
+      console.log('Original checkout button not found');
+      return document.createElement('div'); // Return empty div if not found
+    }
+
+    // Create a copy of the original button
+    const checkoutBtn = originalCheckoutBtn.cloneNode(true);
+
+    // Add data attribute for cleanup
+    checkoutBtn.setAttribute('data-checkout-button', 'true');
+
+    // Remove any existing event listeners and add our own
+    checkoutBtn.removeAttribute('ng-click');
+    checkoutBtn.onclick = () => {
+      // Trigger the original button
+      originalCheckoutBtn.click();
+      // Close modal when going to cart page
+      closeModal();
+    };
+
+    // Style the button to match our modal design
+    checkoutBtn.style.cssText = `
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 500;
+      transition: all 0.2s;
+      width: 100%;
+    `;
+
+    // Set up disabled state watcher
+    const updateCheckoutButtonState = () => {
+      const isDisabled =
+        originalCheckoutBtn.disabled ||
+        originalCheckoutBtn.classList.contains('disabled') ||
+        originalCheckoutBtn.getAttribute('disabled') !== null;
+
+      checkoutBtn.disabled = isDisabled;
+
+      if (isDisabled) {
+        checkoutBtn.style.opacity = '0.6';
+        checkoutBtn.style.cursor = 'not-allowed';
+        checkoutBtn.style.backgroundColor = '#6c757d';
+      } else {
+        checkoutBtn.style.opacity = '1';
+        checkoutBtn.style.cursor = 'pointer';
+        checkoutBtn.style.backgroundColor = '#dc3545';
+      }
+    };
+
+    // Initial state update
+    updateCheckoutButtonState();
+
+    // Set up watcher using MutationObserver to watch for changes
+    const observer = new MutationObserver(updateCheckoutButtonState);
+    observer.observe(originalCheckoutBtn, {
+      attributes: true,
+      attributeFilter: ['disabled', 'class']
+    });
+
+    // Also watch for changes in the parent elements
+    if (originalCheckoutBtn.parentElement) {
+      observer.observe(originalCheckoutBtn.parentElement, {
+        attributes: true,
+        childList: true,
+        subtree: true
+      });
+    }
+
+    // Store observer reference for cleanup
+    checkoutBtn._observer = observer;
+
+    return checkoutBtn;
   };
 
   const closeModal = () => {
@@ -306,6 +389,12 @@
       // Check if the hide reopen button checkbox is checked
       const hideCheckbox = document.getElementById('hide-reopen-checkbox');
       const shouldHideReopen = hideCheckbox && hideCheckbox.checked;
+
+      // Clean up checkout button observer
+      const checkoutBtn = overlay.querySelector('[data-checkout-button]');
+      if (checkoutBtn && checkoutBtn._observer) {
+        checkoutBtn._observer.disconnect();
+      }
 
       overlay.remove();
 
