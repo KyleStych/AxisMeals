@@ -122,27 +122,6 @@ A browser script that simplifies the school lunch ordering process by providing 
 - Use the "Hide reopen button" checkbox in the modal
 - The button can be moved by modifying the CSS in the script
 
-## Customization
-
-### Modifying Button Colors
-Edit the color values in the `createButton` function:
-```javascript
-const openBreakfastsBtn = createButton('Open All Breakfasts', openBreakfasts, 'rgb(248, 148, 6)');
-```
-
-### Changing Modal Title
-Modify the title text in the `createModal` function:
-```javascript
-title.textContent = 'Make It Easy';
-```
-
-### Adjusting Button Sizes
-Modify the padding values in the `makeButtonsBigger` function:
-```javascript
-link.style.padding = '10px 15px';
-link.style.marginBottom = '10px';
-```
-
 ## Support
 
 This script is designed to work with HotLunchOnline v6.1.4 lunch ordering systems. If you encounter issues:
